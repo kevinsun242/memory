@@ -34,6 +34,15 @@ class Memory extends React.Component {
     });
   }
 
+  reset() {
+    this.setState({
+      clicks: 0,
+      randomTiles: this.generateTiles(),
+      matchedTiles: [],
+      flippedTiles: [],
+    });
+  }
+
   flipTile(index) {
     let xs = _.map(this.state.randomTiles, (tile) => {
       if (tile.index == index) {
@@ -55,7 +64,8 @@ class Memory extends React.Component {
     });
 
     if(flippedTiles.length == 2) {
-      this.checkMatch();
+      var that = this;
+      setTimeout(function(){that.checkMatch();}, 2000);
     }
   }
 
@@ -103,10 +113,17 @@ class Memory extends React.Component {
       return <TileItem tile={tile} flipTile={this.flipTile.bind(this)} key={index} />;
     });
 
+    let winText = ""
+    if (this.state.matchedTiles.length == 16) {
+      winText = "You Win!";
+    }
+
     return (
       <div className="Game">
         <h1>Memory Game</h1>
         <div className="Board">{tiles}</div>
+        <div className="Win Text"><p>{winText}</p></div>
+        <div className="Reset"><ResetButton reset={this.reset.bind(this)}/></div>
       </div>) 
   };
 }
@@ -114,12 +131,16 @@ class Memory extends React.Component {
 function TileItem(props) {
   let tile = props.tile;
   if (tile.matched) {
-    return <button class="Tile" id={tile.index}>{tile.value}</button>
+    return <button className="MatchedTile" id={tile.index} disabled>{tile.value}</button>
   }
   else if (tile.visible) {
-    return <button class="Tile" id={tile.index}>{tile.value}</button>
+    return <button className="FlippedTile" id={tile.index} disabled>{tile.value}</button>
   }
   else {
-    return <button class="Tile" id={tile.index} onClick={() => props.flipTile(tile.index)}>Tile</button>
+    return <button className="Tile" id={tile.index} onClick={() => props.flipTile(tile.index)}>Tile</button>
   }
+}
+
+function ResetButton(props) {
+  return <button className="ResetButton" id="reset" onClick={() => props.reset()}>Reset Game</button>
 }
