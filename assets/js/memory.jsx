@@ -44,13 +44,56 @@ class Memory extends React.Component {
       }
     });
 
-    let flippedTiles = this.state.flippedTiles.slice();
-    flippedTiles.push(this.state.randomTiles[index])
+    let flippedTiles = this.state.flippedTiles;
+    flippedTiles.push(this.state.randomTiles[index]);
 
     this.setState({
       clicks: this.state.clicks + 1,
       randomTiles: xs,
       matchedTiles: this.state.matchedTiles,
+      flippedTiles: flippedTiles,
+    });
+
+    if(flippedTiles.length == 2) {
+      this.checkMatch();
+    }
+  }
+
+  checkMatch() {
+    let xs = this.state.randomTiles;
+    let flippedTiles = this.state.flippedTiles;
+    let tile1 = flippedTiles[0];
+    let tile2 = flippedTiles[1];
+    let matchedTiles = this.state.matchedTiles;
+
+    if (tile1.value == tile2.value) {
+      xs = _.map(xs, (tile) => {
+        if (tile.index == tile1.index || tile.index == tile2.index) {
+          return _.extend(tile, {matched: true});
+        }
+        else {
+          return tile
+        }
+      });
+      flippedTiles = [];
+      matchedTiles.push(tile1, tile2);
+    }
+    else {
+      xs = _.map(xs, (tile) => {
+        if (tile.index == tile1.index || tile.index == tile2.index) {
+          return _.extend(tile, {visible: false});
+        }
+        else {
+          return tile
+        }
+      });
+      flippedTiles = [];
+    }
+
+    this.setState({
+      clicks: this.state.clicks,
+      randomTiles: xs,
+      matchedTiles: matchedTiles,
       flippedTiles: flippedTiles,
     });
   }
