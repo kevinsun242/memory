@@ -8,11 +8,13 @@ export default function game_init(root) {
 }
 
 // App state for memory is:
-// {tiles: [List of tiles]}
-//
+// clicks: number of clicks so far
+// {randomTiles: [List of tiles in random order]}
+// matchedTiles: number of matched tiles 
+// flippedTiles: currently flipped and active tiles
 //
 // A tile is:
-// {value: String, matched: Bool}
+// {value: String, index: Int, matched: Bool. visible: Bool}
 
 class Memory extends React.Component {
   constructor(props) {
@@ -20,11 +22,13 @@ class Memory extends React.Component {
     this.state = {
       clicks: 0,
       randomTiles: this.generateTiles(),
-      matchedTiles: [],
+      matchedTiles: 0,
       flippedTiles: [],
     };
   }
 
+  // Generatetiles: generates a random list of tiles by shuffling the possible values
+  // Each tile has a value, index, and two booleans for being matched and visible
   generateTiles() {
     let randomTiles = _.shuffle(['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D',
                                  'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'])
@@ -38,12 +42,15 @@ class Memory extends React.Component {
     this.setState({
       clicks: 0,
       randomTiles: this.generateTiles(),
-      matchedTiles: [],
+      matchedTiles: 0,
       flippedTiles: [],
     });
   }
 
+  // flipTile: Flips the tile at certain inded
+  // @param index is the index of the tile in the list
   flipTile(index) {
+    // map through the list and only make the tile at the index visible
     let xs = _.map(this.state.randomTiles, (tile) => {
       if (tile.index == index) {
         return _.extend(tile, {visible: true});
@@ -53,9 +60,11 @@ class Memory extends React.Component {
       }
     });
 
+    // Add the tile to the list of flipped tiles
     let flippedTiles = this.state.flippedTiles;
     flippedTiles.push(this.state.randomTiles[index]);
 
+    // Return a new state and trigger render
     this.setState({
       clicks: this.state.clicks + 1,
       randomTiles: xs,
@@ -63,12 +72,14 @@ class Memory extends React.Component {
       flippedTiles: flippedTiles,
     });
 
+    // If there are two tiles flipped then check if the match
     if(flippedTiles.length == 2) {
       var that = this;
       setTimeout(function(){that.checkMatch();}, 2000);
     }
   }
 
+  // checkMatch: check if the two flipped tiles match
   checkMatch() {
     let xs = this.state.randomTiles;
     let flippedTiles = this.state.flippedTiles;
@@ -76,6 +87,8 @@ class Memory extends React.Component {
     let tile2 = flippedTiles[1];
     let matchedTiles = this.state.matchedTiles;
 
+    // If the two values match, then keep the tiles flipped
+    // and increment the matched tiles by 2
     if (tile1.value == tile2.value) {
       xs = _.map(xs, (tile) => {
         if (tile.index == tile1.index || tile.index == tile2.index) {
@@ -86,8 +99,10 @@ class Memory extends React.Component {
         }
       });
       flippedTiles = [];
-      matchedTiles.push(tile1, tile2);
+      matchedTiles+=2;
     }
+    // If the two values do not match, flip them again and remove the tiles
+    // from the list of flipped tiles
     else {
       xs = _.map(xs, (tile) => {
         if (tile.index == tile1.index || tile.index == tile2.index) {
@@ -100,6 +115,7 @@ class Memory extends React.Component {
       flippedTiles = [];
     }
 
+    // Return a new state and render
     this.setState({
       clicks: this.state.clicks,
       randomTiles: xs,
@@ -114,7 +130,7 @@ class Memory extends React.Component {
     });
 
     let winText = ""
-    if (this.state.matchedTiles.length == 16) {
+    if (this.state.matchedTiles == 16) {
       winText = "You Win!";
     }
 
@@ -122,7 +138,7 @@ class Memory extends React.Component {
       <div className="Game">
         <h1>Memory Game</h1>
         <div className="Board">{tiles}</div>
-        <div className="Win Text"><p>{winText}</p></div>
+        <div><p className="WinText">{winText}</p></div>
         <div className="Reset"><ResetButton reset={this.reset.bind(this)}/></div>
         <div className="Clicks"><p>Number of clicks taken: {this.state.clicks}</p></div>
       </div>) 
