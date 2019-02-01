@@ -124,6 +124,7 @@ class Memory extends React.Component {
         <div className="Board">{tiles}</div>
         <div className="Win Text"><p>{winText}</p></div>
         <div className="Reset"><ResetButton reset={this.reset.bind(this)}/></div>
+        <div className="Clicks"><p>Number of clicks taken: {this.state.clicks}</p></div>
       </div>) 
   };
 }
@@ -131,10 +132,10 @@ class Memory extends React.Component {
 function TileItem(props) {
   let tile = props.tile;
   if (tile.matched) {
-    return <button className="MatchedTile" id={tile.index} disabled>{tile.value}</button>
+    return <button className="Tile" id={tile.index} disabled>{tile.value}</button>
   }
   else if (tile.visible) {
-    return <button className="FlippedTile" id={tile.index} disabled>{tile.value}</button>
+    return <button className="Tile" id={tile.index} disabled>{tile.value}</button>
   }
   else {
     return <button className="Tile" id={tile.index} onClick={() => props.flipTile(tile.index)}>Tile</button>
