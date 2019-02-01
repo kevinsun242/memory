@@ -1,0 +1,45 @@
+Please fill in answers to the questions below:
+
+
+1. What's your name?
+Kevin Sun
+
+
+
+2. What's the URL of the github repo with your work for this HW?
+https://github.com/kevinsun242/memory
+
+
+
+3. What's the URL that you deployed to?
+memory1.ksun.pw
+
+
+
+4. Is your game functionality complete? If not, what's missing?
+There is currently a bit of a bug with clicking a tile while
+the sleep is in progress, you have to wait until the two
+seconds are up before clicking a new tile otherwise 
+the list of tiles that are currently flipped may have
+issues.
+
+
+
+5. Is your game properly deployed? If not, what went wrong?
+Yes
+
+
+
+
+
+
+
+And here's a list of tasks for grading comments. Just leave this here:
+ - Development
+ - Deployment
+ - Submission
+ - AA
+ - BB
+ - CC
+
+
